@@ -7,3 +7,7 @@
  mail:18707125049@163.com
  
 """
+
+
+def test():
+    pass
