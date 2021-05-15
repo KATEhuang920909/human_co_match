@@ -110,7 +110,7 @@ for i in range(k):
 
     data_table = get_data(train_label, train_feature)
     train = pandas.concat([train, data_table], ignore_index=True)
-
+train.to_csv(r'temp_feature.csv')
 model = lightgbm.train(train_set=lightgbm.Dataset(train.iloc[:, 3:], label=train.标签)
                        , num_boost_round=500,
                        params={"objective": "binary", "learning_rate": 0.03, "max_depth": 6, "num_leaves": 32,
