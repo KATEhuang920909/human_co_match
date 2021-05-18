@@ -12,12 +12,15 @@ from sklearn.metrics import f1_score
 import numpy as np
 
 params = {"objective": "binary",
-          "learning_rate": 0.03,
+          "learning_rate": 0.05,
           "max_depth": 6,
           "num_leaves": 32,
           "verbose": -1,
           "bagging_fraction": 0.8,
-          "feature_fraction": 0.8}
+          "feature_fraction": 0.9,
+          'subsample': 0.85,
+          'bagging_freq': 1,
+          'random_state': 2048}
 
 
 def lgb_f1_score(y_hat, data):
@@ -44,6 +47,4 @@ def lgb_model_for_offline_test(train, train_label, valid, valid_label):
                            params=params,
                            feval=lgb_f1_score,
                            early_stopping_rounds=100)
-
     return model
-

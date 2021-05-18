@@ -18,7 +18,7 @@ def load_data(path):
 
 
 def submission(path, model, data, name):
-    data["预测打分"] = model.predict(data[data.columns[:-3]].values)
+    data["预测打分"] = model.predict(data[data.columns[:-1]].values)
     test_data = data.sort_values("预测打分", ascending=False, ignore_index=True)
     test_data["预测"] = 0
     test_data.loc[:int(0.15 * len(test_data)), ["预测"]] = 1
@@ -27,3 +27,11 @@ def submission(path, model, data, name):
     submit.columns = ["RECRUIT_ID", "PERSON_ID", "LABEL"]
     submit.to_csv(path + name + ".csv", index=False)
 
+
+
+
+
+if __name__ == '__main__':
+    txt1='工程管理'
+    txt2='工商管理'
+    print(Jaccrad(txt1,txt2))
