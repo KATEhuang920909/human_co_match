@@ -10,14 +10,28 @@
 """2021-05-19 02:52:20 文本特征包括各类相似度特征，关键词匹配特征，文本的embedding特征，也可以考虑纯文本的匹配"""
 import numpy as np
 from simhash import Simhash
-
-
-
-
-
-
+import difflib
+import Levenshtein
 
 # 文本匹配方法
+
+
+# 语义向量相似度
+def cosine_similarity(vec1, vec2) -> float:
+    """
+    """
+
+    num = vec1.dot(vec2.T)
+    denom = np.linalg.norm(vec1) * np.linalg.norm(vec2)
+    cos = num / denom
+    sim = 0.5 + 0.5 * cos
+
+    return sim
+
+
+##############字符串相似度4种#########################
+
+# edit distance
 # jaccard
 def sim_jaccard(grams_reference, grams_model):  # terms_reference为源句子，terms_model为候选句子
     """
@@ -38,37 +52,7 @@ def sim_jaccard(grams_reference, grams_model):  # terms_reference为源句子，
         return 1  # 不限专业则符合要求
 
 
-# 余弦距离
-def cosine_similarity(sentence1: str, sentence2: str) -> float:
-    """
-    compute normalized COSINE similarity.
-    :param sentence1: English sentence.
-    :param sentence2: English sentence.
-    :return: normalized similarity of two input sentences.
-    """
-    seg1 = sentence1.strip(" ").split(" ")
-    seg2 = sentence2.strip(" ").split(" ")
-    word_list = list(set([word for word in seg1 + seg2]))
-    word_count_vec_1 = []
-    word_count_vec_2 = []
-    for word in word_list:
-        word_count_vec_1.append(seg1.count(word))
-        word_count_vec_2.append(seg2.count(word))
-
-    vec_1 = np.array(word_count_vec_1)
-    vec_2 = np.array(word_count_vec_2)
-
-    num = vec_1.dot(vec_2.T)
-    denom = np.linalg.norm(vec_1) * np.linalg.norm(vec_2)
-    cos = num / denom
-    sim = 0.5 + 0.5 * cos
-
-    return sim
-
-
-# edit distance
-
-def sim_edit(s1, s2):
+def sim_edit(sentence1: str, sentence2: str) -> float:
     """编辑距离归一化后计算相似度"""
 
     # def edit_sim(s1, s2):
@@ -91,24 +75,22 @@ def sim_edit(s1, s2):
         return dp[len1][len2]
 
     # 1. 计算编辑距离
-    res = edit_distance(s1, s2)
+    res = edit_distance(sentence1, sentence2)
     # 2. 归一化到0~1
-    maxLen = max(len(s1), len(s2))
+    maxLen = max(len(sentence1), len(sentence2))
     sim = 1 - res * 1.0 / maxLen
     return sim
 
 
-
-
-def simhash(text_a, text_b):
+def simhash(sentence1: str, sentence2: str) -> float:
     """
     求两文本的相似度
     :param text_a:
     :param text_b:
     :return:
     """
-    a_simhash = Simhash(text_a)
-    b_simhash = Simhash(text_b)
+    a_simhash = Simhash(sentence1)
+    b_simhash = Simhash(sentence2)
     max_hashbit = max(len(bin(a_simhash.value)), len(bin(b_simhash.value)))
     # 汉明距离
     distince = a_simhash.distance(b_simhash)
@@ -116,8 +98,22 @@ def simhash(text_a, text_b):
     return similar
 
 
+# 判断相似度的方法，用到了difflib库
+def get_equal_rate_1(str1, str2):
+    return difflib.SequenceMatcher(a=str1, b=str2).quick_ratio()
+
+
+# 执行方法进行验证
 if __name__ == '__main__':
-    print(simhash("工程管理", "工商管理"))
-    print(sim_edit("工程管理", "工商管理"))
-    print(cosine_similarity("工程管理", "工商管理"))
-    print(sim_jaccard("工程管理", "工商管理"))
+    str1 = '任正非称，对华为不会出现“断供”这种极端情况，我们已经做好准备了。任正非称，今年春节时，我们判断出现这种情况是2年以后。\
+   我还有两年时间去足够足够准备了。孟晚舟事件时我们认为这个时间提前了，我们春节都在加班。保安、清洁工、服务人员，春节期间有5000人\
+   都在加班，加倍工资都在供应我们的战士战斗，大家都在抢时间。（新浪科技）'
+    b = ' 任正非称，对华为不会出现“断供”这种极端情况，我们已经做好准备了。任正非称，今年春节时，我们判断出现这种情况是2年以后。\
+   我还有两年时间去足够足够准备了。孟晚舟事件时我们认为这个时间提前了，我们春节都在加班。保安、清洁工、服务人员，春节期间有5000人\
+   都在加班，加倍工资都在供应我们的战士战斗，大家都在抢时间。'
+    print(get_equal_rate_1(str1, b))
+
+    print(simhash(str1, b))
+    print(sim_edit(str1, b))
+    # print(cosine_similarity("工程管理", "工商管理"))
+    print(sim_jaccard(str1, b))
