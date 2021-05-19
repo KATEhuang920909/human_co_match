@@ -122,26 +122,7 @@ def work_year_match(data):
     return 0
 
 
-# 专业是否匹配
-def major_match(text1, text2):  # terms_reference为源句子，terms_model为候选句子
-    """
-    这里用到jaccard匹配
-    :param text1: 投递者专业
-    :param text2: 岗位要求专业
-    :return: 匹配值
-    """
-    if text1:
-        grams_reference = text_clean(text1)
-        grams_model = text_clean(text2)
-        temp = 0
-        for i in grams_reference:
-            if i in grams_model:
-                temp = temp + 1
-        fenmu = len(grams_model) + len(grams_reference) - temp  # 并集
-        jaccard_coefficient = float(temp / fenmu)  # 交集
-        return jaccard_coefficient
-    else:
-        return 1  # 不限专业则符合要求
+
 
 
 # 英语语言能力特征离散
