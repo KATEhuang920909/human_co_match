@@ -48,3 +48,39 @@ def lgb_model_for_offline_test(train, train_label, valid, valid_label):
                            feval=lgb_f1_score,
                            early_stopping_rounds=100)
     return model
+
+# model = lightgbm.LGBMClassifier(num_leaves=64,
+#                            max_depth=10,
+#                            learning_rate=0.1,
+#                            n_estimators=1000000,
+#                            subsample=0.8,
+#                            feature_fraction=0.8,
+#                            reg_alpha=0.5,
+#                            reg_lambda=0.5,
+#                            random_state=2048,
+#                            metric='auc')
+#
+#
+#
+# lgb_model = model.fit(X_train,
+#                       Y_train,
+#                       eval_names=['valid'],
+#                       eval_set=[(X_val, Y_val)],
+#                       verbose=100,
+#                       eval_metric='auc',
+#                       early_stopping_rounds=100)
+#
+# pred_val = lgb_model.predict(X_val)
+# df_oof = df_train.iloc[val_idx][['RECRUIT_ID', 'PERSON_ID', ycol]].copy()
+# df_oof['pred'] = pred_val[:, 1]
+# oof.append(df_oof)
+#
+# pred_test = lgb_model.predict_proba(df_test[feature_names])
+# prediction['pred'] += pred_test[:, 1] / kfold.n_splits
+#
+# df_importance = pd.DataFrame({
+#     'column': feature_names,
+#     'importance': model.feature_importances_,
+# })
+# df_importance_list.append(df_importance)
+#

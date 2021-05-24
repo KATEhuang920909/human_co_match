@@ -254,7 +254,7 @@ def mode_rate(data):
 # 招聘岗位的投递记录中：求职意向岗位，求职者专业，（年龄、工作经历数、项目经验数、可到职天数）统计指标、工作地点符合占比、
 # 统计方式：train\test联合统计
 def deliver_record_feature(data_feature):
-    for f1, f2 in tqdm([["岗位编号", "岗位类别"], ["岗位编号", "应聘者专业"], ["岗位编号", "工作地点"]]):
+    for f1, f2 in tqdm([["岗位编号", "求职意向岗位类别"], ["岗位编号", "应聘者专业"], ["岗位编号", "求职意向工作地点"]]):
         data_feature[f"{f1}_{f2}_nunique"] = data_feature.groupby(
             [f1])[f2].transform("nunique")
     # 最大值、最小值、均值、标准差、众数、众数占比
@@ -295,9 +295,9 @@ def get_k_fold_data(train_data,
                     person,
                     intent_table,
                     job_table,
-                    project_history,
+                    # project_history,
                     project_history_table,
-                    work_history,
+                    # work_history,
                     work_history_table,
                     candidate_data,
                     job_data):
@@ -320,9 +320,9 @@ def get_k_fold_data(train_data,
                             person,
                             intent_table,
                             job_table,
-                            project_history,
+                            # project_history,
                             project_history_table,
-                            work_history,
+                            # work_history,
                             work_history_table,
                             candidate_data,
                             job_data)
@@ -340,9 +340,9 @@ def data_merge(data,
                person,
                intent_table,
                job_table,
-               project_history,
+               # project_history,
                project_history_table,
-               work_history,
+               # work_history,
                work_history_table,
                candidate_data,
                job_data):
@@ -350,38 +350,38 @@ def data_merge(data,
     data = data.merge(job_table, on="岗位编号", how="left")
 
     """work_history column:["求职者编号", "工作经历岗位类别", "工作经历单位所在地", "工作经历单位所属行业", "工作经历主要业绩"])"""
-    data_temp = data.merge(work_history, on="求职者编号", how="left")
-
-    for func in ["simhash", "sim_jaccard", "difflibs"]:
-        for wh in ["工作经历岗位类别", "工作经历单位所属行业", "工作经历主要业绩"]:
-            for jd in ["招聘职位", "对应聘者的专业要求", "具体要求"]:
-                st = t.time()
-                data_temp[f"{wh}_{jd}_{func}"] = data_temp.apply(lambda x: eval(func)(x[wh], x[jd]),
-                                                                 axis=1)
-                df_temp1 = data_temp.groupby("求职者编号")[f"{wh}_{jd}_{func}"].agg(
-                    [(f"{wh}_{jd}_{func}_mean", "mean"),
-                     (f"{wh}_{jd}_{func}_max", "max"),
-                     (f"{wh}_{jd}_{func}_min", "min"),
-                     (f"{wh}_{jd}_{func}_std", "std")]
-                ).reset_index()
-                data = data.merge(df_temp1, on="求职者编号", how="left")
-                print(f"{wh}_{jd}_{func}，共耗时:", t.time() - st)
-    """project history column:["项目名称", "项目说明", "职责说明", "关键技术"]"""
-    data_temp2 = data.merge(project_history, on="求职者编号", how="left")
-    for func in ["simhash", "sim_jaccard", "difflibs"]:
-        for ph in ["项目名称", "项目说明", "职责说明", "关键技术"]:
-            for jd in ["招聘职位", "对应聘者的专业要求", "具体要求"]:
-                st = t.time()
-                data_temp2[f"{ph}_{jd}_{func}"] = data_temp2.apply(lambda x: eval(func)(x[ph], x[jd]),
-                                                                   axis=1)
-                df_temp2 = data_temp2.groupby("求职者编号")[f"{ph}_{jd}_{func}"].agg(
-                    [(f"{ph}_{jd}_{func}_mean", "mean"),
-                     (f"{ph}_{jd}_{func}_max", "max"),
-                     (f"{ph}_{jd}_{func}_min", "min"),
-                     (f"{ph}_{jd}_{func}_std", "std")]
-                ).reset_index()
-                data = data.merge(df_temp2, on="求职者编号", how="left")
-                print(f"{ph}_{jd}_{func}，共耗时:", t.time() - st)
+    # data_temp = data.merge(work_history, on="求职者编号", how="left")
+    #
+    # for func in ["simhash", "sim_jaccard", "difflibs"]:
+    #     for wh in ["工作经历岗位类别", "工作经历单位所属行业", "工作经历主要业绩"]:
+    #         for jd in ["招聘职位", "对应聘者的专业要求", "具体要求"]:
+    #             st = t.time()
+    #             data_temp[f"{wh}_{jd}_{func}"] = data_temp.apply(lambda x: eval(func)(x[wh], x[jd]),
+    #                                                              axis=1)
+    #             df_temp1 = data_temp.groupby("求职者编号")[f"{wh}_{jd}_{func}"].agg(
+    #                 [(f"{wh}_{jd}_{func}_mean", "mean"),
+    #                  (f"{wh}_{jd}_{func}_max", "max"),
+    #                  (f"{wh}_{jd}_{func}_min", "min"),
+    #                  (f"{wh}_{jd}_{func}_std", "std")]
+    #             ).reset_index()
+    #             data = data.merge(df_temp1, on="求职者编号", how="left")
+    #             print(f"{wh}_{jd}_{func}，共耗时:", t.time() - st)
+    # """project history column:["项目名称", "项目说明", "职责说明", "关键技术"]"""
+    # data_temp2 = data.merge(project_history, on="求职者编号", how="left")
+    # for func in ["simhash", "sim_jaccard", "difflibs"]:
+    #     for ph in ["项目名称", "项目说明", "职责说明", "关键技术"]:
+    #         for jd in ["招聘职位", "对应聘者的专业要求", "具体要求"]:
+    #             st = t.time()
+    #             data_temp2[f"{ph}_{jd}_{func}"] = data_temp2.apply(lambda x: eval(func)(x[ph], x[jd]),
+    #                                                                axis=1)
+    #             df_temp2 = data_temp2.groupby("求职者编号")[f"{ph}_{jd}_{func}"].agg(
+    #                 [(f"{ph}_{jd}_{func}_mean", "mean"),
+    #                  (f"{ph}_{jd}_{func}_max", "max"),
+    #                  (f"{ph}_{jd}_{func}_min", "min"),
+    #                  (f"{ph}_{jd}_{func}_std", "std")]
+    #             ).reset_index()
+    #             data = data.merge(df_temp2, on="求职者编号", how="left")
+    #             print(f"{ph}_{jd}_{func}，共耗时:", t.time() - st)
 
     data = data.merge(intent_table, on="求职者编号", how="left")
     data = data.merge(project_history_table, on="求职者编号", how="left")
@@ -391,13 +391,13 @@ def data_merge(data,
     data = data.merge(job_data, on="岗位编号", how="left")
     """求职者个人的匹配特征"""
 
-    for func in ["simhash", "sim_jaccard", "difflibs"]:
-        for ud in ["应聘者专业", "最近工作岗位", "最近所在行业", "专业特长",
-                   "求职意向岗位类别", "求职意向所在行业", "自荐信"]:
-            for jd in ["招聘职位", "对应聘者的专业要求", "具体要求"]:
-                st = t.time()
-                data[f"{ud}_{jd}_{func}"] = data.apply(lambda x: eval(func)(x[ud], x[jd]), axis=1)
-                print(f"{ud}_{jd}_{func}，共耗时:", t.time() - st)
+    # for func in ["simhash", "sim_jaccard", "difflibs"]:
+    #     for ud in ["应聘者专业", "最近工作岗位", "最近所在行业", "专业特长",
+    #                "求职意向岗位类别", "求职意向所在行业", "自荐信"]:
+    #         for jd in ["招聘职位", "对应聘者的专业要求", "具体要求"]:
+    #             st = t.time()
+    #             data[f"{ud}_{jd}_{func}"] = data.apply(lambda x: eval(func)(x[ud], x[jd]), axis=1)
+    #             print(f"{ud}_{jd}_{func}，共耗时:", t.time() - st)
 
     data["工作地点符合否"] = (data.求职意向工作地点 == data.岗位工作地点).astype("float")
     data["工作年限是否符合"] = data.apply(lambda x: work_year_match(x), axis=1)
