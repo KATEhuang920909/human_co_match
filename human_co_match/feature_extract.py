@@ -13,6 +13,7 @@
 """2021-05-16 02:30:00语言能力：普通话标准、流利、精通、二级甲等（二甲、二级甲）、二级乙等（二级乙、二乙）、粤语、四级、六级、八级、日语"""
 """2021-05-19 02:48:16  1.证书的挖掘；2.单位所属行业;3.单位所在地的挖掘"""
 """2021-05-23 00:36:06  添加特征：是否有专业限制"""
+"""2021-05-27 22:44:21  求职者的竞争力"""
 import pandas as pd
 from data_preprocess import text_clean, text_tokenizer
 import re
@@ -204,7 +205,7 @@ def japanese_language_feature(txt):
     return "UNKNOWN"
 
 
-# 投递岗位的名词中是否在工作业绩描述中出现
+# 投递岗位的名词中是否在工作业绩/工作经历描述中出现及出现个数
 def job_name_work_history_match(name, txt):
     """
     :todo:
@@ -212,7 +213,11 @@ def job_name_work_history_match(name, txt):
     :param txt:业绩描述
     :return:
     """
-    pass
+    txt = txt.split(name)
+    if len(txt) == 1:
+        return 0
+    else:
+        return len(txt) - 1
 
 
 # 男性占比
