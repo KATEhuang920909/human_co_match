@@ -13,7 +13,7 @@ from zhon.hanzi import punctuation as ch_punc
 import re
 import jieba
 import pandas as pd
-
+from text_matching.bert.basic_feature_extract import bert_encoder
 jieba.load_userdict(r"D:\learning\competition\人岗匹配\human_co_match\human_co_match\data\dict.txt")
 
 
@@ -26,6 +26,9 @@ def text_tokenizer(txt):
     sentence = text_clean(txt)
     sentence = jieba.lcut(sentence)
     return sentence
+
+
+
 
 
 # 投递者文本拼接，岗位文本拼接
@@ -77,7 +80,7 @@ def text_concat(path, data):  # 总共六张表
         job_table["岗位文本内容"] += '0v0'
     print("岗位文本内容处理完毕")
     data = pd.merge(data, person[["求职者编号", "求职者文本内容"]], on="求职者编号", how='left')
-    print("1",data.shape)
+    print("1", data.shape)
     data = pd.merge(data, intent_table[["求职者编号", "投递意向文本内容"]], on="求职者编号", how='left')
     print("2", data.shape)
     data = pd.merge(data, work_history[["求职者编号", "工作经历文本内容"]], on="求职者编号", how='left')

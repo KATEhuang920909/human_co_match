@@ -9,6 +9,42 @@ import numpy as np
 from drcn import args
 
 
+def text2vec(txt):
+    txt = list(txt)
+    txt_vec = bert_encoder(txt)
+
+    return txt_vec
+
+
+def data2vec(data, columns):
+    # train_data = pd.read_csv(path + "train_data.csv")
+    # test_data = pd.read_csv(path + "test_data.csv")
+    # valid_data = pd.read_csv(path + "valid_data.csv")
+    # return train_data, valid_data, test_data
+    data[columns] = data[columns].apply(lambda x: ''.join(x.split('0v0')))
+    data[columns] = data[columns].apply(lambda x: text_clean(x))
+    data = data[columns].apply(lambda x: text2vec(list(x))).values
+    return data
+
+
+def bert_process(vec, length):
+    if len(vec) > length:
+        vec = vec[0:length]
+    elif len(vec) < length:
+        zero = np.zeros(length)
+        length = length - len(vec)
+        for i in range(length):
+            vec = np.vstack((vec, zero))
+    return vec
+
+
+def load_data(path):
+    train_data = pd.read_csv(path + "trainset/recruit_folder.csv", header=0, names=["岗位编号", "求职者编号", "标签"])
+    test_data = pd.read_csv(path + "testset/recruit_folder.csv", header=0, names=["岗位编号", "求职者编号", "标签"])
+    # valid_data = pd.read_csv(path + "valid_data.csv")
+    return train_data, test_data
+
+
 # 加载字典
 def load_char_vocab():
     path = os.path.join(os.path.dirname(__file__), '../input/vocab.txt')
