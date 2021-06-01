@@ -3,9 +3,9 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
-from dssm.graph import Graph
+from .graph import Graph
 import tensorflow as tf
-from utils.load_data import load_char_data
+from .load_data import load_char_data
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 

@@ -41,8 +41,12 @@ def bert_process(vec, length):
 def load_data(path):
     train_data = pd.read_csv(path + "trainset/recruit_folder.csv", header=0, names=["岗位编号", "求职者编号", "标签"])
     test_data = pd.read_csv(path + "testset/recruit_folder.csv", header=0, names=["岗位编号", "求职者编号", "标签"])
+    train_data = train_data.sample(frac=1.0)
+    train_data, valid_data = train_test_split(train_data, test_size=0.2)
+    train_data = train_data.reset_index(drop=True)
+    valid_data = valid_data.reset_index(drop=True)
     # valid_data = pd.read_csv(path + "valid_data.csv")
-    return train_data, test_data
+    return train_data, valid_data, test_data
 
 
 # 加载字典
