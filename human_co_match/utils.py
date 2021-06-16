@@ -8,6 +8,9 @@
  
 """
 import pandas as pd
+from data_preprocess import text_clean
+from embedding import bert_feature_extract
+from sklearn.model_selection import train_test_split
 
 
 def load_data(path):
@@ -15,6 +18,7 @@ def load_data(path):
     test_data = pd.read_csv(path + "test_data.csv")
     valid_data = pd.read_csv(path + "valid_data.csv")
     return train_data, valid_data, test_data
+
 
 
 def submission(path, model, data, name):

@@ -13,7 +13,7 @@ from zhon.hanzi import punctuation as ch_punc
 import re
 import jieba
 import pandas as pd
-from text_matching.bert.basic_feature_extract import bert_encoder
+
 jieba.load_userdict(r"D:\learning\competition\人岗匹配\human_co_match\human_co_match\data\dict.txt")
 
 
@@ -26,9 +26,6 @@ def text_tokenizer(txt):
     sentence = text_clean(txt)
     sentence = jieba.lcut(sentence)
     return sentence
-
-
-
 
 
 # 投递者文本拼接，岗位文本拼接
